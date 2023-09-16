@@ -20,3 +20,27 @@ body {
   color: rgb(var(--foreground-rgb));
   background-color: rgb(222, 222, 198);
 }
+.chessboard {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.chessboard td {
+  width: 70px;
+  height: 70px;
+  text-align: center;
+}
+
+.white-cell {
+  background-color: #ffffff;
+}
+
+.black-cell {
+  background-color: #916a6a;
+  color: #f0f0f0;
+  padding: 5px;
+}
+
+.highlighted-cell {
+  background-color: rgb(220, 253, 226); /* or any other color you prefer */
+}
