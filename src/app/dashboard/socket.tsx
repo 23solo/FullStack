@@ -28,8 +28,6 @@ const ChessmovesClient = () => {
       });
 
       socket.on('message', (data) => {
-        console.log('yoBro', data);
-
         setReceivedMessages((prevMessages) => [...prevMessages, data]);
       });
 

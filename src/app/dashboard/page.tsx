@@ -1,53 +1,113 @@
 'use client';
 
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
+import Messages from './Messages';
+import MessageInput from './MessageInput';
+import CreateRoom from './Room';
+import JoinRoom from './JoinRoom';
 
+type User = {
+  name: string;
+  color: 'W' | 'B';
+  canCastleLeft: boolean;
+  canCastleRight: boolean;
+  isKingInCheck: boolean;
+  kingCheckedFrom: [number, number];
+  kingPosition: [number, number];
+};
 export default function dashboardPage() {
   const [userMove, setUserMove] = useState<number[][]>([]);
   const [grid, setGrid] = useState(Array<Array<Object>>);
   const [board, setBoard] = useState({});
   const [selectedCell, setSelectedCell] = useState<number[]>([]);
-  const [userWhite, setUserWhite] = useState(Object);
-  const [userBlack, setUserBlack] = useState(Object);
-  const user1 = {
-    name: 'Solo',
-    color: 'W',
-    canCastleLeft: true,
-    canCastleRight: true,
-    isKingInCheck: false,
-    kingPosition: [7, 4],
-    kingCheckedFrom: [-1, -1],
+  const [user, setUser] = useState<User>();
+  const [oppUser, setOppUser] = useState<User>();
+  const [socket, setSocket] = useState<Socket>();
+  const [error, setError] = useState('');
+  const [roomId, setRoomId] = useState('');
+  const [gameStatus, setGameStatus] = useState('');
+  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
+
+  useEffect(() => {
+    const newSocket = io('http://localhost:8001'); // Replace with your server URL or IP address
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('chessMove', (board) => {
+        setBoard(board);
+        setGrid(board.grid);
+      });
+
+      socket.on('events', (data) => {
+        setReceivedMessages((prevMessages) => [...prevMessages, data.msg]);
+      });
+
+      socket.on('gameStatus', (data) => {
+        setGameStatus(' ' + data);
+      });
+
+      socket.on('user', (data) => {
+        console.log(data);
+        setUser(data.user);
+        setOppUser(data.oppUser);
+      });
+
+      socket.on('message', (data) => {
+        setReceivedMessages((prevMessages) => [...prevMessages, data]);
+      });
+
+      socket.on('error', (error) => {
+        setError(error);
+        console.log('Error:', error);
+      });
+
+      socket.on('chessinit', (data) => {
+        setBoard(data.board);
+        setGrid(data.board.grid);
+      });
+
+      // Listen for roomCreated event
+      socket.on('roomCreated', (roomId) => {
+        setRoomId(roomId);
+        // Share the room ID with other clients for them to join the same room
+      });
+    }
+  }, [socket]);
+
+  const handleJoin = (val: string) => {
+    setRoomId(val);
+    if (socket) socket.emit('join', { roomId: val });
   };
 
-  const user2 = {
-    name: 'Polo',
-    color: 'B',
-    canCastleLeft: true,
-    canCastleRight: true,
-    isKingInCheck: false,
-    kingPosition: [0, 4],
-    kingCheckedFrom: [-1, -1],
+  const createRoom = () => {
+    if (socket) {
+      let color: string;
+      let x: number = Math.round(Math.random() * 1 + 1);
+      if (x == 1) color = 'B';
+      else color = 'W';
+      socket.emit('join', { color: color });
+    }
   };
 
-  const getUserWhite = () => {
-    setUserWhite(user1);
+  //setBoard(res.data);
+  const handleMessage = (value: string, roomId: string) => {
+    if (socket) socket.emit('message', { roomId: roomId, msg: value });
   };
 
-  const getUserBlack = () => {
-    setUserWhite(user2);
-  };
-
-  const checkMove = () => {
-    console.log(userMove);
-  };
   const handleClick = (rowIndex: number, itemIndex: number) => {
-    console.log('Box clicked at position:', grid[rowIndex][itemIndex]);
-    let currMove = [rowIndex, itemIndex];
-    setSelectedCell([rowIndex, itemIndex]);
-    setUserMove((prevUserMove) => [...prevUserMove, currMove]);
-
+    if (gameStatus == '') {
+      let currMove = [rowIndex, itemIndex];
+      setSelectedCell([rowIndex, itemIndex]);
+      setUserMove((prevUserMove) => [...prevUserMove, currMove]);
+    }
     // Add your code to perform any desired actions based on the click event
   };
 
@@ -67,46 +127,56 @@ export default function dashboardPage() {
   };
 
   useEffect(() => {
-    getBoard();
-  }, []);
-
-  useEffect(() => {
     if (userMove.length == 2) {
-      console.log(userMove);
       updateBoard();
       setUserMove([]);
     }
   }, [userMove]);
 
-  const getBoard = async () => {
-    const res = await axios.get('http://localhost:3333/chess-init');
-    console.log(res.data);
-    setBoard(res.data);
-    setGrid(res.data.grid);
-  };
-
   const updateBoard = async () => {
     const data = {
-      users: [user1, user2],
+      user: user,
       userMove: userMove,
       board: board,
+      roomId: roomId,
     };
-    const res = await axios.post('http://localhost:3333/chess-init', data);
-    console.log(res.data.grid);
-    setBoard(res.data);
-    setGrid(res.data.grid);
+    if (socket) {
+      socket.emit('chessMove', data);
+    }
   };
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen py-2'>
       <div>
-        <button
-          type='button'
-          className='btn p-2 m-4 border border-gray-600 rounded-lg bg-slate-500 focus:outline-none focus:border-gray-600'
-          onClick={getUserBlack}
-        >
-          SetUser
-        </button>
+        {!roomId && (
+          <div>
+            <JoinRoom joinRoom={handleJoin} />
+            <CreateRoom createRoom={createRoom} />
+          </div>
+        )}
+        {roomId && (
+          <div>
+            <div className='btn p-2 m-4 border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
+              Room Id is {roomId}
+            </div>
+            <div>
+              <MessageInput handleMessage={handleMessage} roomId={roomId} />
+              <Messages messages={receivedMessages} />
+            </div>
+          </div>
+        )}
+      </div>
+      {error && <span>{error}</span>}
+      <div>
+        {oppUser && (
+          <button
+            type='button'
+            className='btn p-2 m-4 border border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-600'
+          >
+            {oppUser.name}
+            {gameStatus}
+          </button>
+        )}
       </div>
       <div>
         <table className='chessboard'>
@@ -134,7 +204,7 @@ export default function dashboardPage() {
                         key={valueIndex}
                         src={getImage(value)}
                         alt={value.name}
-                        className=' opacity-0.9'
+                        className='opacity-0.9'
                       />
                     ))}
                   </td>
@@ -145,13 +215,15 @@ export default function dashboardPage() {
         </table>
       </div>
       <div>
-        <button
-          type='button'
-          className='btn p-2 m-4 border border-gray-600 rounded-lg bg-slate-500 focus:outline-none focus:border-gray-600'
-          onClick={getUserWhite}
-        >
-          SetUser
-        </button>
+        {user && (
+          <button
+            type='button'
+            className='btn p-2 m-4 border border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-600'
+          >
+            {user.name}
+            {gameStatus}
+          </button>
+        )}
       </div>
     </div>
   );
