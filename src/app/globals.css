@@ -18,5 +18,93 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background-color: rgb(222, 222, 198);
+  background-color: rgb(179, 131, 131);
+}
+
+.chessboard td {
+  width: min(8vw, 8vh);
+  height: min(8vw, 8vh);
+  text-align: center;
+}
+
+.white-cell {
+  background-color: #ffffff;
+}
+
+.black-cell {
+  background-color: #916a6a;
+  color: #f0f0f0;
+  padding: 5px;
+}
+
+.highlighted-cell {
+  background-color: rgb(220, 253, 226); /* or any other color you prefer */
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Make the sidebar take 1/3rd of the screen and the main content take 2/3rd of the screen */
+  /* Set the container to take up the full height of the viewport */
+}
+
+.sidebar {
+  background-color: lightgray;
+  padding: 10px;
+  margin: 1px auto;
+}
+
+.main-content {
+  background-image: linear-gradient(rgb(101, 101, 101), rgb(0, 0, 0));
+  padding: 4px;
+  margin: 1px auto;
+}
+
+.chessboard td img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.error {
+  color: red;
+  background-color: #f0f0f0;
+  font: bold;
+}
+
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.chessboard {
+  border-collapse: collapse;
+
+  width: 100%;
+  margin: 0 auto;
+}
+
+.white-cell {
+  background-color: #f0d9b5;
+}
+
+.black-cell {
+  background-color: #b58863;
+}
+
+.highlighted-cell-yellow {
+  background-color: #ffe786;
+}
+.highlighted-cell-green {
+  background-color: #9eb58a;
+}
+.piece-image {
+  width: 40px;
+  height: 40px;
+  display: block;
+  margin: 0 auto;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.piece-image:hover {
+  opacity: 1;
 }

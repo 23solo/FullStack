@@ -16,6 +16,7 @@ export default function loginPage() {
   const [buttonColor, setButtonColor] = useState('bg-red-400');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userName, setUserName] = useState('');
   const onLogin = async () => {
     try {
       setLoading(true);
@@ -23,11 +24,13 @@ export default function loginPage() {
       // const response = await axios.post('/api/users/login', user);
 
       // For nestJs Backend
-      await axios.post('http://localhost:3333/auth/signin', user, {
+      const res = await axios.post('http://localhost:3333/auth/signin', user, {
         withCredentials: true,
       });
+      localStorage.setItem('userName', res.data.name);
       router.push('/dashboard');
       window.location.reload();
+      console.log('Response is', res);
     } catch (error: any) {
       setErrorMessage(error.response.data.error || 'Error !!!');
     } finally {
@@ -47,6 +50,7 @@ export default function loginPage() {
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen py-2'>
+      {userName}
       <h1 className='mb-4 text-lg text-green-900'>
         {loading ? 'Processing' : 'Login'}
       </h1>
@@ -70,6 +74,11 @@ export default function loginPage() {
         value={user.password}
         onChange={(e) => {
           setUser({ ...user, password: e.target.value });
+        }}
+        onKeyDown={(e) => {
+          if (e.key == 'Enter') {
+            onLogin();
+          }
         }}
         placeholder='password'
       />
