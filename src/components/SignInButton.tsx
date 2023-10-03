@@ -68,7 +68,10 @@ const SignInButton = () => {
     <div className='flex gap-4 ml-auto items-center'>
       {!isLoading && (
         <div>
-          <Link href={'/login'} className='flex gap-4 ml-auto text-green-600'>
+          <Link
+            href={'/login'}
+            className='flex gap-4 ml-auto bg-green-600 text-green-200 p-2 rounded'
+          >
             Sign In
           </Link>
         </div>

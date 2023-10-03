@@ -17,6 +17,16 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [userName, setUserName] = useState('');
+
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidPassword = (password: string) => {
+    return password.length >= 6; // Password must have at least 6 characters
+  };
+
   const onLogin = async () => {
     try {
       setLoading(true);
@@ -40,8 +50,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user.email.length > 0 && user.password.length > 0) {
-      setButtonDisabled(false);
-      setButtonColor('bg-green-500');
+      if (isValidEmail(user.email) && isValidPassword(user.password)) {
+        setButtonDisabled(false);
+        setButtonColor('bg-green-500');
+      } else {
+        setButtonDisabled(true);
+        setButtonColor('bg-red-400');
+      }
     } else {
       setButtonDisabled(true);
       setButtonColor('bg-red-400');
@@ -70,7 +85,7 @@ export default function LoginPage() {
       <input
         className='border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black'
         id='password'
-        type='text'
+        type='password'
         value={user.password}
         onChange={(e) => {
           setUser({ ...user, password: e.target.value });
