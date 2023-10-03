@@ -24,7 +24,7 @@ export default function loginPage() {
       // const response = await axios.post('/api/users/login', user);
 
       // For nestJs Backend
-      const res = await axios.post('http://localhost:3333/auth/signin', user, {
+      const res = await axios.post(`${process.env.API_URL}/auth/signin`, user, {
         withCredentials: true,
       });
       localStorage.setItem('userName', res.data.name);

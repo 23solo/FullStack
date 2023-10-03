@@ -2,7 +2,6 @@
 
 import axios from 'axios';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 const SignInButton = () => {
@@ -16,7 +15,7 @@ const SignInButton = () => {
   const onSignOut = async () => {
     try {
       axios.defaults.withCredentials = true;
-      await axios.post('http://localhost:3333/auth/signout', {
+      await axios.post(`${process.env.API_URL}/auth/signout`, {
         method: `POST`,
         withCredentials: true,
       });
@@ -29,10 +28,13 @@ const SignInButton = () => {
   const checkToken = async () => {
     try {
       axios.defaults.withCredentials = true;
-      const res = await axios.post('http://localhost:3333/auth/get_token', {
+      console.log(`Port is  :${process.env.API_URL}`);
+
+      const res = await axios.post(`${process.env.API_URL}/auth/get_token`, {
         method: `POST`,
         withCredentials: true,
       });
+      console.log('res is', res);
 
       if (res.data.success || false) {
         setTokenExists(true);
@@ -40,6 +42,7 @@ const SignInButton = () => {
         setTokenExists(false);
       }
     } catch (error) {
+      console.log('err is', error);
       setTokenExists(false);
     }
   };

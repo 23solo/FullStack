@@ -3,6 +3,9 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
+import { config } from 'dotenv';
+config();
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
