@@ -1,6 +1,5 @@
 'use client';
 
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import Messages from './Messages';
@@ -17,23 +16,37 @@ type User = {
   kingCheckedFrom: [number, number];
   kingPosition: [number, number];
 };
+export type Cell = {
+  color: string;
+  position?: [number, number];
+  piece?: any;
+};
 export default function dashboardPage() {
   const [userMove, setUserMove] = useState<number[][]>([]);
-  const [grid, setGrid] = useState(Array<Array<Object>>);
-  const [board, setBoard] = useState({});
-  const [selectedCell, setSelectedCell] = useState<number[]>([]);
+  const [grid, setGrid] = useState(Array<Array<Cell>>);
+  const [board, setBoard] = useState();
+  const [selectedCellYellow, setSelectedCellYellow] = useState<number[]>([]);
+  const [selectedCellGreen, setSelectedCellGreen] = useState<number[]>([]);
   const [user, setUser] = useState<User>();
   const [oppUser, setOppUser] = useState<User>();
   const [socket, setSocket] = useState<Socket>();
+  const [boardError, setBoardError] = useState('');
   const [error, setError] = useState('');
   const [roomId, setRoomId] = useState('');
   const [gameStatus, setGameStatus] = useState('');
   const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const newSocket = io('http://localhost:8001'); // Replace with your server URL or IP address
     setSocket(newSocket);
-
+    if (typeof window !== 'undefined') {
+      // Access the localStorage
+      const name = localStorage.getItem('userName');
+      if (name) {
+        setUserName(name);
+      }
+    }
     return () => {
       newSocket.close();
     };
@@ -46,27 +59,27 @@ export default function dashboardPage() {
         setGrid(board.grid);
       });
 
-      socket.on('events', (data) => {
-        setReceivedMessages((prevMessages) => [...prevMessages, data.msg]);
-      });
-
       socket.on('gameStatus', (data) => {
         setGameStatus(' ' + data);
       });
 
       socket.on('user', (data) => {
-        console.log(data);
         setUser(data.user);
         setOppUser(data.oppUser);
       });
 
+      socket.on('error', (msg) => {
+        setError(msg);
+      });
+
       socket.on('message', (data) => {
+        console.log('Message is', data);
+
         setReceivedMessages((prevMessages) => [...prevMessages, data]);
       });
 
-      socket.on('error', (error) => {
-        setError(error);
-        console.log('Error:', error);
+      socket.on('board_error', (board_error) => {
+        setBoardError(board_error);
       });
 
       socket.on('chessinit', (data) => {
@@ -76,6 +89,7 @@ export default function dashboardPage() {
 
       // Listen for roomCreated event
       socket.on('roomCreated', (roomId) => {
+        setError('');
         setRoomId(roomId);
         // Share the room ID with other clients for them to join the same room
       });
@@ -83,8 +97,7 @@ export default function dashboardPage() {
   }, [socket]);
 
   const handleJoin = (val: string) => {
-    setRoomId(val);
-    if (socket) socket.emit('join', { roomId: val });
+    if (socket) socket.emit('join', { roomId: val.trim(), name: userName });
   };
 
   const createRoom = () => {
@@ -93,20 +106,38 @@ export default function dashboardPage() {
       let x: number = Math.round(Math.random() * 1 + 1);
       if (x == 1) color = 'B';
       else color = 'W';
-      socket.emit('join', { color: color });
+      socket.emit('create', { color: color, name: userName });
     }
   };
 
   //setBoard(res.data);
   const handleMessage = (value: string, roomId: string) => {
-    if (socket) socket.emit('message', { roomId: roomId, msg: value });
+    if (socket)
+      socket.emit('message', { user: userName, roomId: roomId, msg: value });
   };
 
   const handleClick = (rowIndex: number, itemIndex: number) => {
     if (gameStatus == '') {
       let currMove = [rowIndex, itemIndex];
-      setSelectedCell([rowIndex, itemIndex]);
-      setUserMove((prevUserMove) => [...prevUserMove, currMove]);
+      if (
+        grid[rowIndex][itemIndex]?.piece?.color == user?.color &&
+        !userMove[0]
+      ) {
+        setSelectedCellYellow([rowIndex, itemIndex]);
+        setSelectedCellGreen([]);
+        setUserMove((prevUserMove) => [...prevUserMove, currMove]);
+      } else if (
+        userMove[0] &&
+        grid[rowIndex][itemIndex]?.piece?.color == user?.color
+      ) {
+        setUserMove([currMove]);
+        setSelectedCellYellow([rowIndex, itemIndex]);
+      } else if (userMove[0]) {
+        setSelectedCellGreen([rowIndex, itemIndex]);
+        setSelectedCellYellow([]);
+        setUserMove((prevUserMove) => [...prevUserMove, currMove]);
+      }
+      setBoardError('');
     }
     // Add your code to perform any desired actions based on the click event
   };
@@ -130,10 +161,11 @@ export default function dashboardPage() {
     if (userMove.length == 2) {
       updateBoard();
       setUserMove([]);
+      setBoardError('');
     }
   }, [userMove]);
 
-  const updateBoard = async () => {
+  const updateBoard = () => {
     const data = {
       user: user,
       userMove: userMove,
@@ -146,85 +178,102 @@ export default function dashboardPage() {
   };
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen py-2'>
-      <div>
+    <div
+      className={`flex flex-col items-center justify-center min-h-screen py-2 ${
+        oppUser ? 'container' : ''
+      }`}
+    >
+      {error && <span className='error'>{error}</span>}
+
+      <div className={` ${oppUser ? 'sidebar' : ''}`}>
         {!roomId && (
           <div>
             <JoinRoom joinRoom={handleJoin} />
             <CreateRoom createRoom={createRoom} />
           </div>
         )}
-        {roomId && (
+        {!oppUser && roomId && (
           <div>
-            <div className='btn p-2 m-4 border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
-              Room Id is {roomId}
-            </div>
-            <div>
-              <MessageInput handleMessage={handleMessage} roomId={roomId} />
-              <Messages messages={receivedMessages} />
+            <div className='btn p-2 m-4  border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
+              Game Id <span className='text-lg font-bold'> {roomId}</span>
             </div>
           </div>
         )}
-      </div>
-      {error && <span>{error}</span>}
-      <div>
         {oppUser && (
-          <button
-            type='button'
-            className='btn p-2 m-4 border border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-600'
-          >
-            {oppUser.name}
-            {gameStatus}
-          </button>
+          <div>
+            <MessageInput handleMessage={handleMessage} roomId={roomId} />
+            <Messages messages={receivedMessages} />
+          </div>
         )}
       </div>
-      <div>
-        <table className='chessboard'>
-          <tbody>
-            {grid.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((item, itemIndex) => (
-                  <td
-                    key={itemIndex}
-                    className={`${
-                      (rowIndex + itemIndex) % 2 === 0
-                        ? 'white-cell'
-                        : 'black-cell'
-                    } ${
-                      selectedCell[0] === rowIndex &&
-                      selectedCell[1] === itemIndex
-                        ? 'highlighted-cell'
-                        : ''
-                    }`}
-                    onClick={() => handleClick(rowIndex, itemIndex)}
-                  >
-                    {/* Display the values */}
-                    {Object.values(item).map((value, valueIndex) => (
-                      <img
-                        key={valueIndex}
-                        src={getImage(value)}
-                        alt={value.name}
-                        className='opacity-0.9'
-                      />
+
+      {board && (
+        <div className={`main-content ${oppUser ? 'board-present' : ''}`}>
+          {gameStatus && (
+            <span className='text-lg font-bold bg-slate-200 text-slate-900 text-center items-center justify-center'>
+              You {gameStatus}
+            </span>
+          )}
+          {oppUser && (
+            <div className='container p-4 border border-gray-600 rounded-lg bg-white flex flex-col items-center justify-center'>
+              <span className='text-lg font-bold text-center'>
+                {oppUser.name}
+              </span>
+            </div>
+          )}
+          {boardError && <span className='error'>{boardError}</span>}
+          <div className='table-wrapper'>
+            <table className='chessboard'>
+              <tbody>
+                {grid.map((row, rowIndex) => (
+                  <tr key={rowIndex} className='chessboard-row'>
+                    {row.map((item, itemIndex) => (
+                      <td
+                        key={itemIndex}
+                        className={`${
+                          (rowIndex + itemIndex) % 2 === 0
+                            ? 'white-cell'
+                            : 'black-cell'
+                        } ${
+                          selectedCellYellow[0] === rowIndex &&
+                          selectedCellYellow[1] === itemIndex
+                            ? 'highlighted-cell-yellow'
+                            : ''
+                        } ${
+                          selectedCellGreen[0] === rowIndex &&
+                          selectedCellGreen[1] === itemIndex
+                            ? 'highlighted-cell-green'
+                            : ''
+                        }`}
+                        onClick={() => handleClick(rowIndex, itemIndex)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {Object.values(item).map((value, valueIndex) => {
+                          if (value.name) {
+                            return (
+                              <img
+                                key={valueIndex}
+                                src={getImage(value)}
+                                alt={value.name}
+                                className='piece-image opacity-0.9'
+                              />
+                            );
+                          }
+                        })}
+                      </td>
                     ))}
-                  </td>
+                  </tr>
                 ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div>
-        {user && (
-          <button
-            type='button'
-            className='btn p-2 m-4 border border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-600'
-          >
-            {user.name}
-            {gameStatus}
-          </button>
-        )}
-      </div>
+              </tbody>
+            </table>
+          </div>
+          {user && (
+            <div className='container p-4 border border-gray-600 rounded-lg bg-white flex flex-col items-center justify-center'>
+              <span className='text-lg font-bold text-center'>{user.name}</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

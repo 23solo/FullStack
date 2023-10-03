@@ -14,7 +14,7 @@ export default function CreateRoom({
         type='button'
         onClick={() => createRoom(value)}
       >
-        Create Room
+        Create Game
       </button>
     </>
   );

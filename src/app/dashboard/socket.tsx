@@ -65,7 +65,7 @@ const ChessmovesClient = () => {
       <CreateRoom createRoom={createRoom} />
       {roomId && (
         <div className='btn p-2 m-4 border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
-          Room Id is :{roomId}
+          Game Id is {roomId}
         </div>
       )}
       <MessageInput handleMessage={handleMessage} roomId={roomId} />

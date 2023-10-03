@@ -15,11 +15,21 @@ export default function MessageInput(props: MessageInputProps) {
         value={value}
         placeholder='Type Your message....'
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key == 'Enter') {
+            setValue('');
+            props.handleMessage(value, props.roomId);
+          }
+        }}
       />
+
       <button
         className='btn p-2 m-4 border border-gray-600 rounded-lg bg-slate-500 focus:outline-none focus:border-gray-600'
         type='button'
-        onClick={() => props.handleMessage(value, props.roomId)}
+        onClick={() => {
+          setValue('');
+          props.handleMessage(value, props.roomId);
+        }}
       >
         Send
       </button>

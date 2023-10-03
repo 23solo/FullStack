@@ -9,7 +9,6 @@ const SignInButton = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [tokenExists, setTokenExists] = useState(false);
 
-  const router = useRouter();
   useEffect(() => {
     checkToken();
     setIsLoading(false);
@@ -48,7 +47,7 @@ const SignInButton = () => {
   // check if user is active (using token or session)
   if (tokenExists == true)
     return (
-      <div className='flex gap-4 ml-auto'>
+      <div className='flex ml-auto'>
         <p className='text-sky-600'></p>
         {!isLoading && (
           <button
