@@ -13,7 +13,9 @@ const ChessmovesClient = () => {
   const [receivedMessages, setReceivedMessages] = useState<string[]>(['test']);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8001'); // Replace with your server URL or IP address
+    const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND}`, {
+      path: '/socket.io',
+    }); // Replace with your server URL or IP address
     setSocket(newSocket);
 
     return () => {

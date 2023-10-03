@@ -20,8 +20,10 @@ export default function SignupPage() {
     try {
       setLoading(true);
       axios.defaults.withCredentials = true;
+      console.log(`Port in Signp ${process.env.API_URL}`);
+
       const response: any = await axios.post(
-        'http://localhost:3333/auth/signup',
+        `${process.env.API_URL}/auth/signup`,
         user
       );
       setUser({ email: '', password: '', username: '' });

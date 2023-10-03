@@ -38,7 +38,9 @@ export default function dashboardPage() {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    const newSocket = io('http://localhost:8001'); // Replace with your server URL or IP address
+    const newSocket = io(`${process.env.API_URL}`, {
+      path: '/socket.io',
+    }); // Replace with your server URL or IP address
     setSocket(newSocket);
     if (typeof window !== 'undefined') {
       // Access the localStorage
