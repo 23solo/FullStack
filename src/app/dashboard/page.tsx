@@ -21,7 +21,7 @@ export type Cell = {
   position?: [number, number];
   piece?: any;
 };
-export default function dashboardPage() {
+export default function DashboardPage() {
   const [userMove, setUserMove] = useState<number[][]>([]);
   const [grid, setGrid] = useState(Array<Array<Cell>>);
   const [board, setBoard] = useState();
