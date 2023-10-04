@@ -36,9 +36,8 @@ const SignInButton = () => {
         method: `POST`,
         withCredentials: true,
       });
-      console.log('res is', res);
 
-      if (res.data.success || false) {
+      if (res.data.success || Cookies.get('token')) {
         setTokenExists(true);
       } else {
         setTokenExists(false);
