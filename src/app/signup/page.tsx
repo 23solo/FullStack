@@ -20,7 +20,6 @@ export default function SignupPage() {
     try {
       setLoading(true);
       axios.defaults.withCredentials = true;
-      console.log(`Port in Signp ${process.env.API_URL}`);
 
       const response: any = await axios.post(
         `${process.env.API_URL}/auth/signup`,
@@ -61,7 +60,7 @@ export default function SignupPage() {
       <hr />
       <label htmlFor='username'>Username</label>
       <input
-        className='border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600'
+        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600'
         id='username'
         type='text'
         value={user.username}
@@ -72,7 +71,7 @@ export default function SignupPage() {
       />
       <label htmlFor='email'>Email</label>
       <input
-        className='border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600'
+        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600'
         id='email'
         type='text'
         value={user.email}
@@ -93,7 +92,7 @@ export default function SignupPage() {
         placeholder='password'
       />
       <button
-        className={`btn p-2 border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600 ${buttonColor}`}
+        className={`btn p-2 border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600 ${buttonColor}`}
         type='button'
         onClick={onSignup}
         disabled={buttonDisabled}

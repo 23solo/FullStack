@@ -40,7 +40,6 @@ const ChessmovesClient = () => {
       // Listen for roomCreated event
       socket.on('roomCreated', (roomId) => {
         setRoomId(roomId);
-        console.log('Room Created:', roomId);
         // Share the room ID with other clients for them to join the same room
       });
     }
@@ -56,8 +55,6 @@ const ChessmovesClient = () => {
   };
 
   const handleMessage = (value: string, roomId: string) => {
-    console.log('Room id', roomId);
-
     if (socket) socket.emit('message', { roomId: roomId, msg: value });
   };
 

@@ -8,13 +8,13 @@ export default function Home() {
       </h1>
       <a
         href='/dashboard'
-        className='btn p-2 m-4 border items-center justify-content-center border-gray-600 rounded-lg bg-white focus:outline-none focus:border-gray-600'
+        className='btn p-2 m-4 border items-center justify-content-center border-gray-600 rounded-lg bg-white text-black focus:outline-none focus:border-gray-600'
         style={{ fontSize: '20px', padding: '10px 20px' }}
       >
         Start Game
       </a>
       <div
-        className='border-gray-600 rounded-lg bg-inherit focus:outline-none focus:border-gray-600'
+        className='border-gray-600 rounded-lg text-black bg-inherit focus:outline-none focus:border-gray-600'
         style={{ marginTop: '20px', fontSize: '18px' }}
       >
         Created By Sol

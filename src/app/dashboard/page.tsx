@@ -27,6 +27,8 @@ export default function DashboardPage() {
   const [board, setBoard] = useState();
   const [selectedCellYellow, setSelectedCellYellow] = useState<number[]>([]);
   const [selectedCellGreen, setSelectedCellGreen] = useState<number[]>([]);
+  const [selectedOppBlue, setSelectedOppBlue] = useState<number[]>([]);
+  const [checkKingRed, setCheckKingRed] = useState<number[]>([]);
   const [user, setUser] = useState<User>();
   const [oppUser, setOppUser] = useState<User>();
   const [socket, setSocket] = useState<Socket>();
@@ -57,8 +59,10 @@ export default function DashboardPage() {
   useEffect(() => {
     if (socket) {
       socket.on('chessMove', (board) => {
+        setCheckKingRed([]);
         setBoard(board);
         setGrid(board.grid);
+        // setCheckKingRed([]);
       });
 
       socket.on('gameStatus', (data) => {
@@ -70,13 +74,19 @@ export default function DashboardPage() {
         setOppUser(data.oppUser);
       });
 
+      socket.on('oppUserMove', (data) => {
+        setSelectedCellGreen([data[0], data[1]]);
+      });
+
+      socket.on('kingCheck', (data) => {
+        setCheckKingRed([data[0], data[1]]);
+      });
+
       socket.on('error', (msg) => {
         setError(msg);
       });
 
       socket.on('message', (data) => {
-        console.log('Message is', data);
-
         setReceivedMessages((prevMessages) => [...prevMessages, data]);
       });
 
@@ -127,6 +137,7 @@ export default function DashboardPage() {
       ) {
         setSelectedCellYellow([rowIndex, itemIndex]);
         setSelectedCellGreen([]);
+        setSelectedOppBlue([]);
         setUserMove((prevUserMove) => [...prevUserMove, currMove]);
       } else if (
         userMove[0] &&
@@ -245,6 +256,16 @@ export default function DashboardPage() {
                           selectedCellGreen[0] === rowIndex &&
                           selectedCellGreen[1] === itemIndex
                             ? 'highlighted-cell-green'
+                            : ''
+                        }${
+                          checkKingRed[0] === rowIndex &&
+                          checkKingRed[1] === itemIndex
+                            ? 'highlighted-cell-red'
+                            : ''
+                        }${
+                          selectedOppBlue[0] === rowIndex &&
+                          selectedOppBlue[1] === itemIndex
+                            ? 'highlighted-cell-blue'
                             : ''
                         }`}
                         onClick={() => handleClick(rowIndex, itemIndex)}

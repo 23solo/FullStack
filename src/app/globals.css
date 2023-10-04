@@ -94,6 +94,15 @@ body {
 .highlighted-cell-yellow {
   background-color: #ffe786;
 }
+
+.highlighted-cell-red {
+  background-color: #f35c5c;
+}
+
+.highlighted-cell-blue {
+  background-color: #60b7fa;
+}
+
 .highlighted-cell-green {
   background-color: #9eb58a;
 }

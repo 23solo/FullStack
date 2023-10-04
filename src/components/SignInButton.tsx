@@ -16,10 +16,14 @@ const SignInButton = () => {
   const onSignOut = async () => {
     try {
       axios.defaults.withCredentials = true;
-      await axios.post(`${process.env.API_URL}/auth/signout`, {
-        method: `POST`,
-        withCredentials: true,
-      });
+      await axios.post(
+        `${process.env.API_URL}/auth/signout`,
+        { token: Cookies.get('token') },
+        {
+          method: `POST`,
+          withCredentials: true,
+        }
+      );
       setTokenExists(false);
       Cookies.remove('token');
       window.location.reload();
@@ -30,7 +34,6 @@ const SignInButton = () => {
   const checkToken = async () => {
     try {
       axios.defaults.withCredentials = true;
-      console.log(`Port is  :${process.env.API_URL}`);
 
       const res = await axios.post(`${process.env.API_URL}/auth/get_token`, {
         method: `POST`,
@@ -43,7 +46,6 @@ const SignInButton = () => {
         setTokenExists(false);
       }
     } catch (error) {
-      console.log('err is', error);
       setTokenExists(false);
     }
   };
@@ -55,7 +57,7 @@ const SignInButton = () => {
         <p className='text-sky-600'></p>
         {!isLoading && (
           <button
-            className={`btn p-2 border border-gray-600 rounded-lg bg-pink-100 focus:outline-none focus:border-gray-600 `}
+            className={`btn p-2 border border-gray-600 text-black rounded-lg bg-pink-100 focus:outline-none focus:border-gray-600 `}
             type='button'
             onClick={onSignOut}
           >

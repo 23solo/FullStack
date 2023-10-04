@@ -10,6 +10,7 @@ export default function JoinRoom(props: RoomInputProps) {
       <h6 style={{ fontWeight: 'bold', fontSize: '18px' }}>Have Game Id?</h6>
       <input
         type='tel'
+        className='text-black'
         value={value}
         placeholder='Enter Game Id Here...'
         onChange={(e) => setValue(e.target.value)}
