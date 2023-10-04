@@ -4,6 +4,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,11 +38,13 @@ export default function LoginPage() {
       const res = await axios.post(`${process.env.API_URL}/auth/signin`, user, {
         withCredentials: true,
       });
-      console.log('Logged in successfully', res);
+
+      const token = res.data.token;
+      Cookies.set('token', token);
 
       localStorage.setItem('userName', res.data.name);
       router.push('/dashboard');
-      console.log('Response is', res);
+      window.location.reload();
     } catch (error: any) {
       setErrorMessage(error.response.data.error || 'Error !!!');
     } finally {

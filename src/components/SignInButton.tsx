@@ -3,6 +3,7 @@
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 
 const SignInButton = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +21,7 @@ const SignInButton = () => {
         withCredentials: true,
       });
       setTokenExists(false);
+      Cookies.remove('token');
       window.location.reload();
     } catch (error) {
       console.log('Error!!', error);
