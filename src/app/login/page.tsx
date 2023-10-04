@@ -37,9 +37,10 @@ export default function LoginPage() {
       const res = await axios.post(`${process.env.API_URL}/auth/signin`, user, {
         withCredentials: true,
       });
+      console.log('Logged in successfully', res);
+
       localStorage.setItem('userName', res.data.name);
       router.push('/dashboard');
-      window.location.reload();
       console.log('Response is', res);
     } catch (error: any) {
       setErrorMessage(error.response.data.error || 'Error !!!');
