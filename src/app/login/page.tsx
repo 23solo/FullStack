@@ -87,7 +87,7 @@ export default function LoginPage() {
       />
       <label htmlFor='password'>Password</label>
       <input
-        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black'
+        className='border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black'
         id='password'
         type='password'
         value={user.password}
