@@ -35,6 +35,15 @@ export default function SignupPage() {
     }
   };
 
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidPassword = (password: string) => {
+    return password.length >= 6; // Password must have at least 6 characters
+  };
+
   useEffect(() => {
     // Check if user has access
     if (
@@ -42,9 +51,14 @@ export default function SignupPage() {
       user.password.length > 0 &&
       user.username.length > 0
     ) {
-      setResponseMessage('');
-      setButtonDisabled(false);
-      setButtonColor('bg-green-500');
+      if (isValidEmail(user.email) && isValidPassword(user.password)) {
+        setResponseMessage('');
+        setButtonDisabled(false);
+        setButtonColor('bg-green-500');
+      } else {
+        setButtonDisabled(true);
+        setButtonColor('bg-red-400');
+      }
     } else {
       setButtonDisabled(true);
 
