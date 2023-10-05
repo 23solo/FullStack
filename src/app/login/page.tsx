@@ -111,7 +111,7 @@ export default function LoginPage() {
       {errorMessage && <span className='text-red-500'>{errorMessage}</span>}
       <Link
         href='/signup'
-        className='bg-slate-100 text-xs btn p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
+        className='bg-slate-100 text-black text-xs btn p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
       >
         Visit Signup
       </Link>

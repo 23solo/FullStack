@@ -55,7 +55,7 @@ export default function SignupPage() {
   return (
     <div className='flex flex-col items-center justify-center min-h-screen py-2'>
       <h1 className='mb-4 text-lg text-green-900'>
-        {loading ? 'Processing' : 'SignUp'}
+        {loading ? 'Processing...' : 'SignUp'}
       </h1>
       <hr />
       <label htmlFor='username'>Username</label>
@@ -104,7 +104,7 @@ export default function SignupPage() {
       )}
       <Link
         href='/login'
-        className='bg-slate-100 btn text-xs p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
+        className='bg-slate-100 text-black btn text-xs p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
       >
         Visit Login
       </Link>
