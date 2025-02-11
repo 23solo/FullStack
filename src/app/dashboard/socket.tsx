@@ -59,16 +59,33 @@ const ChessmovesClient = () => {
   };
 
   return (
-    <div>
-      <JoinRoom joinRoom={handleJoin} />
-      <CreateRoom createRoom={createRoom} />
+    <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6'>
+      {/* Room Join & Create Section */}
+      <div className='w-full max-w-md bg-white shadow-lg rounded-lg p-6 text-center'>
+        <h2 className='text-2xl font-bold text-gray-800 mb-4'>
+          Join or Create a Room
+        </h2>
+        <div className='flex flex-col gap-4'>
+          <JoinRoom joinRoom={handleJoin} />
+          <CreateRoom createRoom={createRoom} />
+        </div>
+      </div>
+
+      {/* Game ID Display */}
       {roomId && (
-        <div className='btn p-2 m-4 border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
-          Game Id is {roomId}
+        <div className='mt-6 bg-orange-500 text-white font-semibold px-6 py-3 rounded-lg shadow-md'>
+          Game ID: <span className='font-bold'>{roomId}</span>
         </div>
       )}
-      <MessageInput handleMessage={handleMessage} roomId={roomId} />
-      <Messages messages={receivedMessages} />
+
+      {/* Message Input & Chat Section */}
+      <div className='w-full max-w-lg mt-6 p-4 bg-white shadow-md rounded-lg'>
+        <h3 className='text-lg font-semibold text-gray-700 mb-3'>
+          Chat with Opponent
+        </h3>
+        <MessageInput handleMessage={handleMessage} roomId={roomId} />
+        <Messages messages={receivedMessages} />
+      </div>
     </div>
   );
 };

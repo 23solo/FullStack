@@ -1,5 +1,6 @@
 'use client';
 
+import { FaSignInAlt, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -51,40 +52,38 @@ const SignInButton = () => {
   };
 
   // check if user is active (using token or session)
-  if (tokenExists == true)
+
+  if (tokenExists)
     return (
-      <div className='flex ml-auto'>
-        <p className='text-sky-600'></p>
+      <div className='absolute top-4 right-4 flex items-center gap-4'>
         {!isLoading && (
           <button
-            className={`btn p-2 border border-gray-600 text-black rounded-lg bg-pink-100 focus:outline-none focus:border-gray-600 `}
+            className='flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all'
             type='button'
             onClick={onSignOut}
           >
-            Sign Out
+            <FaSignOutAlt /> Sign Out
           </button>
         )}
       </div>
     );
 
   return (
-    <div className='flex gap-4 ml-auto items-center'>
+    <div className='absolute top-4 right-4 flex items-center gap-4'>
       {!isLoading && (
-        <div>
-          <Link
-            href={'/login'}
-            className='flex gap-4 ml-auto bg-green-600 text-green-200 p-2 rounded'
-          >
-            Sign In
-          </Link>
-        </div>
+        <Link
+          href='/login'
+          className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all'
+        >
+          <FaSignInAlt /> Sign In
+        </Link>
       )}
       {!isLoading && (
         <Link
-          href={'/signup'}
-          className='flex gap-4 ml-auto bg-green-600 text-green-200 p-2 rounded'
+          href='/signup'
+          className='flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all'
         >
-          Sign Up
+          <FaUserPlus /> Sign Up
         </Link>
       )}
     </div>

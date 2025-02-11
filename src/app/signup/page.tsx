@@ -29,6 +29,7 @@ export default function SignupPage() {
       setResponseMessage(response.data.message || 'Success !!!');
       // router.push('/login');
     } catch (error: any) {
+      console.log('Error is ', error);
       setResponseMessage(error.response.data.error || 'Error !!!');
     } finally {
       setLoading(false);
@@ -65,63 +66,77 @@ export default function SignupPage() {
       setButtonColor('bg-red-400');
     }
   }, [user]);
-
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen py-2'>
-      <h1 className='mb-4 text-lg text-green-900'>
-        {loading ? 'Processing...' : 'SignUp'}
-      </h1>
-      <hr />
-      <label htmlFor='username'>Username</label>
-      <input
-        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600'
-        id='username'
-        type='text'
-        value={user.username}
-        onChange={(e) => {
-          setUser({ ...user, username: e.target.value });
-        }}
-        placeholder='username'
-      />
-      <label htmlFor='email'>Email</label>
-      <input
-        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600'
-        id='email'
-        type='text'
-        value={user.email}
-        onChange={(e) => {
-          setUser({ ...user, email: e.target.value });
-        }}
-        placeholder='email'
-      />
-      <label htmlFor='password'>Password</label>
-      <input
-        className='border text-black border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600'
-        id='password'
-        type='password'
-        value={user.password}
-        onChange={(e) => {
-          setUser({ ...user, password: e.target.value });
-        }}
-        placeholder='password'
-      />
-      <button
-        className={`btn p-2 border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600 ${buttonColor}`}
-        type='button'
-        onClick={onSignup}
-        disabled={buttonDisabled}
-      >
-        {buttonDisabled ? 'Enter Creds' : 'SignUp'}
-      </button>
-      {responseMessage && (
-        <span className='text-sky-950'>{responseMessage}</span>
-      )}
-      <Link
-        href='/login'
-        className='bg-slate-100 text-black btn text-xs p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
-      >
-        Visit Login
-      </Link>
+    <div className="min-h-screen bg-[url('/assets/chess-background.webp')] bg-cover bg-center flex items-center justify-center">
+      {/* Card Container */}
+      <div className='bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md'>
+        {/* Title */}
+        <h1 className='text-2xl font-semibold text-center text-gray-800 mb-6'>
+          {loading ? 'Processing...' : 'Sign Up'}
+        </h1>
+
+        {/* Username Input */}
+        <label htmlFor='username' className='block font-medium text-gray-700'>
+          Username
+        </label>
+        <input
+          className='border border-gray-400 text-black rounded-md px-3 py-2 w-full mb-4 focus:ring focus:ring-green-300'
+          id='username'
+          type='text'
+          value={user.username}
+          onChange={(e) => setUser({ ...user, username: e.target.value })}
+          placeholder='Enter your username'
+        />
+
+        {/* Email Input */}
+        <label htmlFor='email' className='block font-medium text-gray-700'>
+          Email
+        </label>
+        <input
+          className='border border-gray-400 text-black rounded-md px-3 py-2 w-full mb-4 focus:ring focus:ring-green-300'
+          id='email'
+          type='text'
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+          placeholder='Enter your email'
+        />
+
+        {/* Password Input */}
+        <label htmlFor='password' className='block font-medium text-gray-700'>
+          Password
+        </label>
+        <input
+          className='border border-gray-400 text-black rounded-md px-3 py-2 w-full mb-4 focus:ring focus:ring-green-300'
+          id='password'
+          type='password'
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
+          placeholder='Enter your password'
+        />
+
+        {/* Sign Up Button */}
+        <button
+          disabled={buttonDisabled}
+          className={`w-full text-white font-semibold py-2 rounded-md transition ${buttonColor}`}
+          onClick={onSignup}
+        >
+          {buttonDisabled ? 'Enter Credentials' : 'Sign Up'}
+        </button>
+
+        {/* Response Message */}
+        {responseMessage && (
+          <div className='flex items-center justify-center gap-2 bg-green-100 border border-green-400 text-green-700 rounded-md px-4 py-2 mt-4 shadow'>
+            ✅ {responseMessage}
+          </div>
+        )}
+
+        {/* Login Link */}
+        <div className='text-center mt-4'>
+          <Link href='/login' className='text-blue-500 hover:underline text-sm'>
+            Already have an account? Login
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

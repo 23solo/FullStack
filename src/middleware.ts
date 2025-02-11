@@ -1,11 +1,13 @@
 import { NextResponse, NextRequest } from 'next/server';
 
-// This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   const isPublicPath =
-    path == '/login' || path == '/signup' || path == '/verifyemail';
+    path === '/' ||
+    path === '/login' ||
+    path === '/signup' ||
+    path === '/verifyemail';
 
   const token = request.cookies.get('token')?.value || '';
   console.log('Token is', token);
@@ -15,11 +17,11 @@ export function middleware(request: NextRequest) {
   }
 
   if (!isPublicPath && !token) {
+    console.log('Came here');
     return NextResponse.redirect(new URL('/login', request.nextUrl));
   }
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
   matcher: ['/', '/dashboard', '/login', '/signup', '/verifyemail', '/sockets'],
 };

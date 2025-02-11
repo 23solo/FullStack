@@ -1,5 +1,5 @@
 import { useState } from 'react';
-
+import { FaPaperPlane } from 'react-icons/fa';
 type MessageInputProps = {
   handleMessage: (value: string, roomId: string) => void;
   roomId: string;
@@ -9,30 +9,33 @@ export default function MessageInput(props: MessageInputProps) {
   const [value, setValue] = useState('');
 
   return (
-    <>
+    <div className='flex items-center p-4 bg-white rounded-lg shadow-lg border border-gray-300'>
       <input
-        type='tel'
+        type='text'
         value={value}
-        placeholder='Type Your message....'
+        placeholder='Type your message...'
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key == 'Enter') {
+          if (e.key === 'Enter' && value.trim() !== '') {
+            props.handleMessage(value.trim(), props.roomId);
             setValue('');
-            props.handleMessage(value, props.roomId);
           }
         }}
+        className='flex-grow border border-gray-300 rounded-lg p-3 shadow-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200'
       />
 
       <button
-        className='btn p-2 m-4 border border-gray-600 rounded-lg bg-slate-500 focus:outline-none focus:border-gray-600'
+        className='ml-2 p-2 bg-green-500 text-white rounded-full transition duration-200 ease-in-out transform hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50'
         type='button'
         onClick={() => {
-          setValue('');
-          props.handleMessage(value, props.roomId);
+          if (value.trim() !== '') {
+            props.handleMessage(value.trim(), props.roomId);
+            setValue('');
+          }
         }}
       >
-        Send
+        <FaPaperPlane size={20} />
       </button>
-    </>
+    </div>
   );
 }

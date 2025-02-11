@@ -192,80 +192,104 @@ export default function DashboardPage() {
 
   return (
     <div
-      className={`flex flex-col items-center justify-center min-h-screen py-2 ${
+      className={`flex flex-col items-center justify-center h-screen w-full py-6 px-4 overflow-hidden ${
         oppUser ? 'container' : ''
       }`}
     >
-      {error && <span className='error'>{error}</span>}
+      {/* Error Message */}
+      {error && (
+        <span className='text-red-600 font-semibold mb-4'>{error}</span>
+      )}
 
-      <div className={` ${oppUser ? 'sidebar' : ''}`}>
+      {/* Sidebar Section */}
+      <div
+        className={`w-full max-w-4xl p-6 bg-white bg-opacity-90 shadow-xl rounded-lg ${
+          oppUser ? 'sidebar' : ''
+        }`}
+      >
         {!roomId && (
-          <div>
+          <div className='flex flex-col gap-4'>
             <JoinRoom joinRoom={handleJoin} />
             <CreateRoom createRoom={createRoom} />
           </div>
         )}
+
         {!oppUser && roomId && (
-          <div>
-            <div className='btn p-2 m-4  border border-gray-600 rounded-lg bg-orange-400 focus:outline-none focus:border-gray-600'>
-              Game Id <span className='text-lg font-bold'> {roomId}</span>
+          <div className='flex flex-col items-center mt-4'>
+            <div className='px-4 py-3 border border-gray-600 rounded-lg bg-orange-500 text-white font-semibold shadow-md'>
+              Game ID: <span className='text-lg font-bold'>{roomId}</span>
             </div>
           </div>
         )}
+
         {oppUser && (
-          <div>
-            <MessageInput handleMessage={handleMessage} roomId={roomId} />
-            <Messages messages={receivedMessages} />
+          <div className='mt-6 w-full max-w-md mx-auto bg-white rounded-lg shadow-lg'>
+            <div className='p-4 h-96 overflow-auto'>
+              <Messages messages={receivedMessages} />
+            </div>
+            <div className='p-4 border-t border-gray-300'>
+              <MessageInput handleMessage={handleMessage} roomId={roomId} />
+            </div>
           </div>
         )}
       </div>
 
+      {/* Main Chessboard Section */}
       {board && (
-        <div className={`main-content ${oppUser ? 'board-present' : ''}`}>
+        <div className='w-full max-w-4xl mt-6 flex flex-col items-center overflow-hidden'>
+          {/* Game Status */}
           {gameStatus && (
-            <span className='text-lg font-bold bg-slate-200 text-slate-900 text-center items-center justify-center'>
+            <div className='bg-slate-800 text-white text-center py-3 px-5 rounded-lg font-semibold shadow-lg'>
               You {gameStatus}
-            </span>
+            </div>
           )}
+
+          {/* Opponent Info */}
           {oppUser && (
-            <div className='container p-4 border border-gray-600 rounded-lg bg-white flex flex-col items-center justify-center'>
+            <div className='p-4 border border-gray-600 rounded-lg bg-gray-800 text-white flex flex-col items-center justify-center mt-4 shadow-md overflow-hidden'>
               <span className='text-lg font-bold text-center'>
                 {oppUser.name}
               </span>
             </div>
           )}
-          {boardError && <span className='error'>{boardError}</span>}
-          <div className='table-wrapper'>
-            <table className='chessboard'>
+
+          {/* Board Errors */}
+          {boardError && (
+            <span className='text-red-600 mt-2 text-center'>{boardError}</span>
+          )}
+
+          {/* Chessboard */}
+          <div className='table-wrapper mt-6 p-4 bg-gray-900 rounded-lg shadow-lg w-full max-w-lg'>
+            <table className='chessboard w-full border border-gray-700 rounded-lg overflow-hidden'>
               <tbody>
                 {grid.map((row, rowIndex) => (
                   <tr key={rowIndex} className='chessboard-row'>
                     {row.map((item, itemIndex) => (
                       <td
                         key={itemIndex}
-                        className={`${
+                        className={`relative aspect-square border ${
                           (rowIndex + itemIndex) % 2 === 0
-                            ? 'white-cell'
-                            : 'black-cell'
+                            ? 'bg-gray-300'
+                            : 'bg-gray-700'
                         } ${
                           selectedCellYellow[0] === rowIndex &&
                           selectedCellYellow[1] === itemIndex
-                            ? 'highlighted-cell-yellow'
+                            ? 'bg-yellow-400'
                             : ''
                         } ${
                           selectedCellGreen[0] === rowIndex &&
                           selectedCellGreen[1] === itemIndex
-                            ? 'highlighted-cell-green'
+                            ? 'bg-green-500'
                             : ''
-                        }${
+                        } ${
                           checkKingRed[0] === rowIndex &&
                           checkKingRed[1] === itemIndex
-                            ? 'highlighted-cell-red'
+                            ? 'bg-red-500'
                             : ''
-                        }${
+                        } ${
                           selectedOppBlue[0] === rowIndex &&
                           selectedOppBlue[1] === itemIndex
-                            ? 'highlighted-cell-blue'
+                            ? 'bg-blue-500'
                             : ''
                         }`}
                         onClick={() => handleClick(rowIndex, itemIndex)}
@@ -278,7 +302,7 @@ export default function DashboardPage() {
                                 key={valueIndex}
                                 src={getImage(value)}
                                 alt={value.name}
-                                className='piece-image opacity-0.9'
+                                className='piece-image absolute inset-0 w-full h-full object-contain opacity-90'
                               />
                             );
                           }
@@ -290,8 +314,10 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
+
+          {/* User Info */}
           {user && (
-            <div className='container p-4 border border-gray-600 rounded-lg bg-white flex flex-col items-center justify-center'>
+            <div className='p-4 border border-gray-600 rounded-lg bg-gray-800 text-white flex flex-col items-center justify-center mt-6 shadow-lg'>
               <span className='text-lg font-bold text-center'>{user.name}</span>
             </div>
           )}

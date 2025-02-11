@@ -68,53 +68,65 @@ export default function LoginPage() {
   }, [user]);
 
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen py-2'>
-      {userName}
-      <h1 className='mb-4 text-lg text-green-900'>
-        {loading ? 'Processing' : 'Login'}
-      </h1>
-      <hr />
-      <label htmlFor='email'>Email</label>
-      <input
-        className='border border-gray-600 text-black rounded-lg mb-4 focus:outline-none focus:border-gray-600'
-        id='email'
-        type='text'
-        value={user.email}
-        onChange={(e) => {
-          setUser({ ...user, email: e.target.value });
-        }}
-        placeholder='email'
-      />
-      <label htmlFor='password'>Password</label>
-      <input
-        className='border border-gray-600 rounded-lg mb-4 focus:outline-none focus:border-gray-600 text-black'
-        id='password'
-        type='password'
-        value={user.password}
-        onChange={(e) => {
-          setUser({ ...user, password: e.target.value });
-        }}
-        onKeyDown={(e) => {
-          if (e.key == 'Enter') {
-            onLogin();
-          }
-        }}
-        placeholder='password'
-      />
-      <button
-        disabled={buttonDisabled}
-        className={`btn p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600 ${buttonColor}`}
-        onClick={onLogin}
-      >
-        {buttonDisabled ? 'Enter Creds' : 'Sign In'}
-      </button>
-      {errorMessage && <span className='text-red-500'>{errorMessage}</span>}
-      <Link
-        href='/signup'
-        className='bg-slate-100 text-black text-xs btn p-2 border border-gray-600 rounded-lg mb-4 focus:border-gray-600'
-      >
-        Visit Signup
-      </Link>
+    <div className="min-h-screen bg-[url('/assets/chess-background.webp')] bg-cover bg-center flex items-center justify-center">
+      {/* Card Container */}
+      <div className='bg-white bg-opacity-90 p-8 rounded-lg shadow-lg w-full max-w-md'>
+        {/* Title */}
+        <h1 className='text-2xl font-semibold text-center text-gray-800 mb-6'>
+          {loading ? 'Processing...' : 'Login'}
+        </h1>
+
+        {/* Email Input */}
+        <label htmlFor='email' className='block font-medium text-gray-700'>
+          Email
+        </label>
+        <input
+          className='border border-gray-400 text-black rounded-md px-3 py-2 w-full mb-4 focus:ring focus:ring-yellow-300'
+          id='email'
+          type='text'
+          value={user.email}
+          onChange={(e) => setUser({ ...user, email: e.target.value })}
+          placeholder='Enter your email'
+        />
+
+        {/* Password Input */}
+        <label htmlFor='password' className='block font-medium text-gray-700'>
+          Password
+        </label>
+        <input
+          className='border border-gray-400 text-black rounded-md px-3 py-2 w-full mb-4 focus:ring focus:ring-yellow-300'
+          id='password'
+          type='password'
+          value={user.password}
+          onChange={(e) => setUser({ ...user, password: e.target.value })}
+          onKeyDown={(e) => e.key === 'Enter' && onLogin()}
+          placeholder='Enter your password'
+        />
+
+        {/* Sign In Button */}
+        <button
+          disabled={buttonDisabled}
+          className={`w-full text-white font-semibold py-2 rounded-md transition ${buttonColor}`}
+          onClick={onLogin}
+        >
+          {buttonDisabled ? 'Enter Credentials' : 'Sign In'}
+        </button>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <p className='text-red-500 text-center mt-2'>{errorMessage}</p>
+        )}
+
+        {/* Signup Link */}
+        <div className='text-center mt-4'>
+          <Link
+            href='/signup'
+            className='text-blue-500 hover:underline text-sm'
+          >
+            Don't have an account? Sign up
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Root color variables */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -16,79 +17,45 @@
   }
 }
 
+/* Body Styling */
 body {
   color: rgb(var(--foreground-rgb));
-  background-color: rgb(179, 131, 131);
+  background-image: url('/assets/chess-background.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Chessboard Styling */
+.chessboard {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .chessboard td {
   width: min(8vw, 8vh);
   height: min(8vw, 8vh);
   text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.white-cell {
-  background-color: #ffffff;
-}
-
-.black-cell {
-  background-color: #916a6a;
-  color: #f0f0f0;
-  padding: 5px;
-}
-
-.highlighted-cell {
-  background-color: rgb(220, 253, 226); /* or any other color you prefer */
-}
-
-.container {
-  display: grid;
-  grid-template-columns: 1fr 2fr; /* Make the sidebar take 1/3rd of the screen and the main content take 2/3rd of the screen */
-  /* Set the container to take up the full height of the viewport */
-}
-
-.sidebar {
-  background-color: lightgray;
-  padding: 10px;
-  margin: 1px auto;
-}
-
-.main-content {
-  background-image: linear-gradient(rgb(101, 101, 101), rgb(0, 0, 0));
-  padding: 4px;
-  margin: 1px auto;
-}
-
-.chessboard td img {
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-}
-
-.error {
-  color: red;
-  background-color: #f0f0f0;
-  font: bold;
-}
-
-.table-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.chessboard {
-  border-collapse: collapse;
-
-  width: 100%;
-  margin: 0 auto;
-}
-
+/* Chessboard Cells */
 .white-cell {
   background-color: #f0d9b5;
 }
 
 .black-cell {
   background-color: #b58863;
+  color: #f0f0f0;
+}
+
+.highlighted-cell {
+  background-color: rgb(220, 253, 226);
 }
 
 .highlighted-cell-yellow {
@@ -106,14 +73,101 @@ body {
 .highlighted-cell-green {
   background-color: #9eb58a;
 }
+
+/* Chess Pieces */
+.chessboard td img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
 .piece-image {
   width: 40px;
   height: 40px;
   display: block;
   margin: 0 auto;
-  transition: opacity 0.3s ease-in-out;
+  transition: transform 0.2s ease-in-out;
 }
 
 .piece-image:hover {
-  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Layout Styling */
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 20px;
+  padding: 20px;
+}
+
+.sidebar {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.main-content {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Buttons */
+.button {
+  background: linear-gradient(135deg, #ffcc00, #ff6600);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #ff9900, #cc4400);
+}
+
+/* Blog Cards */
+.blog-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.blog-card:hover {
+  transform: scale(1.02);
+}
+
+/* Error Messages */
+.error {
+  color: red;
+  background-color: #ffe5e5;
+  padding: 8px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+  }
+}
+body {
+  overflow: hidden; /* Prevent scrolling on the body */
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

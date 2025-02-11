@@ -1,36 +1,26 @@
 import { useEffect, useRef } from 'react';
 
 export default function Messages({ messages }: { messages: string[] }) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const divRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+    if (divRef.current) {
+      divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [messages]);
 
   return (
-    <textarea
-      style={{
-        width: '100%',
-        height: '400px',
-        overflow: 'auto',
-        fontFamily: 'Arial',
-        fontSize: '14px',
-        lineHeight: '1.5',
-        padding: '5px',
-        borderRadius: '5px',
-        boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)',
-        border: '1px solid #ccc',
-        backgroundColor: 'beige',
-      }}
-      readOnly={true}
-      ref={textareaRef}
-      defaultValue={messages
-        .map((message, index) => {
-          return `${message}\n`;
-        })
-        .join('')}
-    ></textarea>
+    <div
+      className='w-full h-96 overflow-auto p-4 bg-white border border-gray-300 rounded-lg shadow-md'
+      ref={divRef}
+    >
+      {messages.map((message, index) => (
+        <div key={index} className='mb-2'>
+          <div className='bg-blue-100 text-blue-800 p-2 rounded-lg shadow-sm'>
+            {message}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
