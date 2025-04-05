@@ -20,11 +20,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang='en' className='h-screen overflow-hidden'>
-      <body className={`${inter.className} h-screen overflow-hidden`}>
+      <body className={`${inter.className} h-screen`}>
+        {/* Navbar */}
         <div className='h-[5vh] w-full fixed top-0 z-50'>
           <NavBar />
         </div>
-        <div className='h-[95vh] overflow-y-auto flex flex-col'>{children}</div>
+
+        {/* Main Content */}
+        <div className='h-[95vh] overflow-y-auto flex flex-col mt-[5vh]'>
+          {children}
+        </div>
       </body>
     </html>
   );

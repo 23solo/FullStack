@@ -15,6 +15,7 @@ const ChessmovesClient = () => {
   useEffect(() => {
     const newSocket = io(`${process.env.NEXT_PUBLIC_BACKEND}`, {
       path: '/socket.io',
+      transports: ['websocket'],
     }); // Replace with your server URL or IP address
     setSocket(newSocket);
 

@@ -10,7 +10,6 @@ export function middleware(request: NextRequest) {
     path === '/verifyemail';
 
   const token = request.cookies.get('token')?.value || '';
-  console.log('Token is', token);
 
   if (isPublicPath && token) {
     return NextResponse.redirect(new URL('/dashboard', request.nextUrl));

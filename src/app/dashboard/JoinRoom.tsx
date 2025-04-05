@@ -7,7 +7,7 @@ export default function JoinRoom(props: RoomInputProps) {
 
   return (
     <div className='flex flex-col items-center'>
-      <h6 className='text-lg font-bold mb-4 text-gray-800'>Have Game Id?</h6>
+      <h6 className='text-lg font-bold mb-4 text-white-800'>Have Game Id?</h6>
       <input
         type='tel'
         className='text-black border border-gray-300 rounded-lg p-2 w-64 mb-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500'
