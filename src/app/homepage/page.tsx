@@ -49,7 +49,7 @@ export default function HomePage() {
               href='/signup'
               className='inline-flex items-center justify-center px-6 py-3 rounded-full bg-yellow-400 text-gray-900 text-lg font-bold shadow-md transition-all transform hover:scale-105 hover:bg-yellow-300'
             >
-              ♟ Join Now
+              ♟ Play Now
             </Link>
           </div>
 

@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
+import LoadingScreen from './LoadingScreen';
 
 const SignInButton = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -12,10 +13,11 @@ const SignInButton = () => {
 
   useEffect(() => {
     checkToken();
-    setIsLoading(false);
   }, []);
+
   const onSignOut = async () => {
     try {
+      setIsLoading(true);
       axios.defaults.withCredentials = true;
       await axios.post(
         `${process.env.API_URL}/auth/signout`,
@@ -30,8 +32,11 @@ const SignInButton = () => {
       window.location.reload();
     } catch (error) {
       console.log('Error!!', error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
   const checkToken = async () => {
     try {
       axios.defaults.withCredentials = true;
@@ -48,44 +53,43 @@ const SignInButton = () => {
       }
     } catch (error) {
       setTokenExists(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // check if user is active (using token or session)
+  if (isLoading) {
+    return null; // Return null because this is just a button component
+  }
 
-  if (tokenExists)
+  if (tokenExists) {
     return (
       <div className='absolute top-4 right-4 flex items-center gap-4'>
-        {!isLoading && (
-          <button
-            className='flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all'
-            type='button'
-            onClick={onSignOut}
-          >
-            <FaSignOutAlt /> Sign Out
-          </button>
-        )}
+        <button
+          className='flex items-center gap-2 px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all'
+          type='button'
+          onClick={onSignOut}
+        >
+          <FaSignOutAlt /> Sign Out
+        </button>
       </div>
     );
+  }
 
   return (
     <div className='absolute top-4 right-4 flex items-center gap-4'>
-      {!isLoading && (
-        <Link
-          href='/login'
-          className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all'
-        >
-          <FaSignInAlt /> Sign In
-        </Link>
-      )}
-      {!isLoading && (
-        <Link
-          href='/signup'
-          className='flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all'
-        >
-          <FaUserPlus /> Sign Up
-        </Link>
-      )}
+      <Link
+        href='/login'
+        className='flex items-center gap-2 px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-all'
+      >
+        <FaSignInAlt /> Sign In
+      </Link>
+      <Link
+        href='/signup'
+        className='flex items-center gap-2 px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all'
+      >
+        <FaUserPlus /> Sign Up
+      </Link>
     </div>
   );
 };

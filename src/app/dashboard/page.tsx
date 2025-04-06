@@ -7,6 +7,7 @@ import MessageInput from './MessageInput';
 import CreateRoom from './Room';
 import JoinRoom from './JoinRoom';
 import PawnPromotionModal from './PawnPromotionalModel';
+import AuthenticatedLayout from '@/components/AuthenticatedLayout';
 
 type User = {
   name: string;
@@ -297,162 +298,167 @@ export default function DashboardPage() {
       socket.emit('chessMove', data);
     }
   };
+
   return (
-    <div className='flex h-screen w-full backdrop-blur-lg pt-[5vh] relative'>
-      {/* Sidebar */}
-      <div className='w-64 text-white p-6 flex flex-col items-center justify-center shadow-lg h-full fixed left-0 top-0 bg-gray-900'>
-        {error && (
-          <span className='text-red-500 font-semibold mb-4'>{error}</span>
-        )}
-        {!roomId && (
-          <div className='flex flex-col gap-4'>
-            <JoinRoom joinRoom={handleJoin} />
-            <CreateRoom createRoom={createRoom} />
-          </div>
-        )}
-        {roomId && !oppUser && (
-          <div className='bg-yellow-400 text-white p-4 rounded-lg shadow-lg text-center text-lg font-extrabold border-2 border-white'>
-            Game ID: <span className='underline'>{roomId}</span>
-          </div>
-        )}
+    <AuthenticatedLayout requireAuth>
+      <div className='flex h-screen w-full backdrop-blur-lg pt-[5vh] relative'>
+        {/* Sidebar */}
+        <div className='w-64 text-white p-6 flex flex-col items-center justify-center shadow-lg h-full fixed left-0 top-0 bg-gray-900'>
+          {error && (
+            <span className='text-red-500 font-semibold mb-4'>{error}</span>
+          )}
+          {!roomId && (
+            <div className='flex flex-col gap-4'>
+              <JoinRoom joinRoom={handleJoin} />
+              <CreateRoom createRoom={createRoom} />
+            </div>
+          )}
+          {roomId && !oppUser && (
+            <div className='bg-yellow-400 text-white p-4 rounded-lg shadow-lg text-center text-lg font-extrabold border-2 border-white'>
+              Game ID: <span className='underline'>{roomId}</span>
+            </div>
+          )}
 
-        <div className='text-center text-sm text-gray-400 mt-4'>
-          Chess Game - Abhishek
+          <div className='text-center text-sm text-gray-400 mt-4'>
+            Chess Game - Abhishek
+          </div>
         </div>
-      </div>
 
-      {/* Main Chessboard Section */}
-      <div className='flex flex-row items-start justify-center w-full ml-64 p-4 relative'>
-        <div className='flex flex-col items-center w-full max-w-3xl relative'>
-          {gameStatus && (
-            <div className='absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50'>
-              <div className='bg-slate-800 text-white text-center py-8 px-10 rounded-lg font-semibold shadow-lg text-2xl'>
-                <h2 className='text-3xl font-bold mb-4'>
-                  {gameStatus.status === 'won' ? '🎉 Victory!' : '😞 Defeat'}
-                </h2>
-                <p className='text-lg'>
-                  {gameStatus.status === 'won'
-                    ? `Congratulations, ${gameStatus.winner}!`
-                    : `Sorry, ${gameStatus.loser} you ran out of time.`}
-                </p>
-                <button
-                  onClick={() => setGameStatus(null)}
-                  className='mt-6 px-5 py-2 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-all'
-                >
-                  Close
-                </button>
+        {/* Main Chessboard Section */}
+        <div className='flex flex-row items-start justify-center w-full ml-64 p-4 relative'>
+          <div className='flex flex-col items-center w-full max-w-3xl relative'>
+            {gameStatus && (
+              <div className='absolute inset-0 flex items-center justify-center z-10 bg-black bg-opacity-50'>
+                <div className='bg-slate-800 text-white text-center py-8 px-10 rounded-lg font-semibold shadow-lg text-2xl'>
+                  <h2 className='text-3xl font-bold mb-4'>
+                    {gameStatus.status === 'won' ? '🎉 Victory!' : '😞 Defeat'}
+                  </h2>
+                  <p className='text-lg'>
+                    {gameStatus.status === 'won'
+                      ? `Congratulations, ${gameStatus.winner}!`
+                      : `Sorry, ${gameStatus.loser} you ran out of time.`}
+                  </p>
+                  <button
+                    onClick={() => setGameStatus(null)}
+                    className='mt-6 px-5 py-2 bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 transition-all'
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Opponent Info */}
-          {oppUser && (
-            <div className='flex justify-between items-center w-full max-w-2xl mb-2 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg'>
-              <span className='font-bold'>
-                {oppUser.name} ({oppUser.rating || 1500})
-              </span>
-              <span className='bg-gray-700 px-3 py-1 rounded-lg text-sm'>
-                {formatTime(oppUser.timeLeft)}
-              </span>
-            </div>
-          )}
+            {/* Opponent Info */}
+            {oppUser && (
+              <div className='flex justify-between items-center w-full max-w-2xl mb-2 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg'>
+                <span className='font-bold'>
+                  {oppUser.name} ({oppUser.rating || 1500})
+                </span>
+                <span className='bg-gray-700 px-3 py-1 rounded-lg text-sm'>
+                  {formatTime(oppUser.timeLeft)}
+                </span>
+              </div>
+            )}
 
-          {/* Chessboard */}
-          {board && (
-            <div
-              className={`relative p-4 rounded-lg shadow-lg w-full max-w-2xl border-4 border-gray-600 bg-[#858585] backdrop-blur-lg ${
-                gameStatus ? 'blur-sm' : ''
-              }`}
-            >
-              <table className='chessboard w-full border border-gray-700 rounded-lg overflow-hidden'>
-                <tbody>
-                  {grid.map((row, rowIndex) => (
-                    <tr key={rowIndex} className='chessboard-row'>
-                      {row.map((item, itemIndex) => (
-                        <td
-                          key={itemIndex}
-                          className={`relative aspect-square border ${
-                            (rowIndex + itemIndex) % 2 === 0
-                              ? 'bg-gray-100'
-                              : 'bg-brown-500'
-                          } ${
-                            selectedCellYellow[0] === rowIndex &&
-                            selectedCellYellow[1] === itemIndex
-                              ? 'bg-yellow-400'
-                              : ''
-                          } ${
-                            selectedCellGreen[0] === rowIndex &&
-                            selectedCellGreen[1] === itemIndex
-                              ? 'bg-green-500'
-                              : ''
-                          } ${
-                            checkKingRed[0] === rowIndex &&
-                            checkKingRed[1] === itemIndex
-                              ? 'bg-red-500'
-                              : ''
-                          } ${
-                            selectedOppBlue[0] === rowIndex &&
-                            selectedOppBlue[1] === itemIndex
-                              ? 'bg-blue-500'
-                              : ''
-                          } hover:opacity-80 transition-all cursor-pointer`}
-                          onClick={() => handleClick(rowIndex, itemIndex)}
-                        >
-                          {Object.values(item).map((value, valueIndex) =>
-                            value.name ? (
-                              <img
-                                key={valueIndex}
-                                src={getImage(value)}
-                                alt={value.name}
-                                className='absolute inset-0 w-full h-full object-contain opacity-90'
-                              />
-                            ) : null
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            {/* Chessboard */}
+            {board && (
+              <div
+                className={`relative p-4 rounded-lg shadow-lg w-full max-w-2xl border-4 border-gray-600 bg-[#858585] backdrop-blur-lg ${
+                  gameStatus ? 'blur-sm' : ''
+                }`}
+              >
+                <table className='chessboard w-full border border-gray-700 rounded-lg overflow-hidden'>
+                  <tbody>
+                    {grid.map((row, rowIndex) => (
+                      <tr key={rowIndex} className='chessboard-row'>
+                        {row.map((item, itemIndex) => (
+                          <td
+                            key={itemIndex}
+                            className={`relative aspect-square border ${
+                              (rowIndex + itemIndex) % 2 === 0
+                                ? 'bg-gray-100'
+                                : 'bg-brown-500'
+                            } ${
+                              selectedCellYellow[0] === rowIndex &&
+                              selectedCellYellow[1] === itemIndex
+                                ? 'bg-yellow-400'
+                                : ''
+                            } ${
+                              selectedCellGreen[0] === rowIndex &&
+                              selectedCellGreen[1] === itemIndex
+                                ? 'bg-green-500'
+                                : ''
+                            } ${
+                              checkKingRed[0] === rowIndex &&
+                              checkKingRed[1] === itemIndex
+                                ? 'bg-red-500'
+                                : ''
+                            } ${
+                              selectedOppBlue[0] === rowIndex &&
+                              selectedOppBlue[1] === itemIndex
+                                ? 'bg-blue-500'
+                                : ''
+                            } hover:opacity-80 transition-all cursor-pointer`}
+                            onClick={() => handleClick(rowIndex, itemIndex)}
+                          >
+                            {Object.values(item).map((value, valueIndex) =>
+                              value.name ? (
+                                <img
+                                  key={valueIndex}
+                                  src={getImage(value)}
+                                  alt={value.name}
+                                  className='absolute inset-0 w-full h-full object-contain opacity-90'
+                                />
+                              ) : null
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+            <div>
+              {promotionMove && (
+                <PawnPromotionModal
+                  onSelect={handlePawnPromotion}
+                  pieceColor={promotionMove.user.color}
+                />
+              )}
             </div>
-          )}
-          <div>
-            {promotionMove && (
-              <PawnPromotionModal
-                onSelect={handlePawnPromotion}
-                pieceColor={promotionMove.user.color}
-              />
+
+            {boardError && (
+              <span className='text-red-600 mt-2 text-center'>
+                {boardError}
+              </span>
+            )}
+
+            {/* User Info */}
+            {user && (
+              <div className='flex justify-between items-center w-full max-w-2xl mt-2 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg'>
+                <span className='font-bold'>
+                  {user.name} ({oppUser?.rating || 1500})
+                </span>
+                <span className='bg-gray-700 px-3 py-1 rounded-lg text-sm'>
+                  {formatTime(user.timeLeft)}
+                </span>
+              </div>
             )}
           </div>
-
-          {boardError && (
-            <span className='text-red-600 mt-2 text-center'>{boardError}</span>
-          )}
-
-          {/* User Info */}
-          {user && (
-            <div className='flex justify-between items-center w-full max-w-2xl mt-2 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg'>
-              <span className='font-bold'>
-                {user.name} ({oppUser?.rating || 1500})
-              </span>
-              <span className='bg-gray-700 px-3 py-1 rounded-lg text-sm'>
-                {formatTime(user.timeLeft)}
-              </span>
+        </div>
+        {/* Chat Section (Right-aligned) */}
+        {oppUser && (
+          <div className='w-80 text-white p-6 flex flex-col items-center justify-center shadow-lg h-full right-0 top-0 bg-gray-900'>
+            <div className='overflow-auto p-4 rounded-lg shadow-md w-full'>
+              <Messages messages={receivedMessages} />
             </div>
-          )}
-        </div>
+            <div className='p-4 border-t border-gray-700 w-full'>
+              <MessageInput handleMessage={handleMessage} roomId={roomId} />
+            </div>
+          </div>
+        )}
       </div>
-      {/* Chat Section (Right-aligned) */}
-      {oppUser && (
-        <div className='w-80 text-white p-6 flex flex-col items-center justify-center shadow-lg h-full right-0 top-0 bg-gray-900'>
-          <div className='overflow-auto p-4 rounded-lg shadow-md w-full'>
-            <Messages messages={receivedMessages} />
-          </div>
-          <div className='p-4 border-t border-gray-700 w-full'>
-            <MessageInput handleMessage={handleMessage} roomId={roomId} />
-          </div>
-        </div>
-      )}
-    </div>
+    </AuthenticatedLayout>
   );
 }
